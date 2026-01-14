@@ -39,11 +39,11 @@
 }
 
 .controls button:hover {
-  background: #333333;
+  background: #a83030;
 }
 
 .controls button:active {
-  transform: translateY(0.5em)
+  transform: translateY(0.5em);
 }
 
 .controls .teal {
