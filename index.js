@@ -1,51 +1,63 @@
-const display = document.querySelector('.display')
-const controlButtons = document.querySelector('.controls').children
-const allSymbols = ['+', '-', 'X', '÷', '%', 'C', '=']
+const display = document.querySelector(".display");
+const controlButtons = document.querySelector(".controls").children;
+const allSymbols = ["+", "-", "X", "÷", "%", "C", "=", "⌫"];
 
-let firstValue = ''
-let secondValue = ''
-let symbol  = ''
-let result = ''
+let firstValue = "";
+let secondValue = "";
+let symbol = "";
+let result = "";
 
 const calculate = () => {
-  firstValue = parseFloat(firstValue)
-  secondValue = parseFloat(secondValue)
+  firstValue = parseFloat(firstValue);
+  secondValue = parseFloat(secondValue);
 
-  if (symbol === '+') result = firstValue + secondValue
-  if (symbol === '-') result = firstValue - secondValue
-  if (symbol === 'X') result = firstValue * secondValue
-  if (symbol === '÷') result = firstValue / secondValue
-  if (symbol === '%') result = firstValue % secondValue
+  if (symbol === "+") result = firstValue + secondValue;
+  if (symbol === "-") result = firstValue - secondValue;
+  if (symbol === "X") result = firstValue * secondValue;
+  if (symbol === "÷") result = firstValue / secondValue;
+  if (symbol === "%") result = firstValue % secondValue;
 
-  display.innerText = result
-  firstValue = result
-  secondValue = ''
-}
+  display.innerText = result;
+  firstValue = result;
+  secondValue = "";
+};
 
 for (let button of controlButtons) {
-  button.addEventListener('click', () => {
-    const { innerText: btnValue } = button
-    const btnValueIsSymbol = allSymbols.includes(btnValue)
+  button.addEventListener("click", () => {
+    const { innerText: btnValue } = button;
+    const btnValueIsSymbol = allSymbols.includes(btnValue);
+    if (btnValue === "⌫") {
+      if (secondValue) {
+        secondValue = secondValue.slice(0, -1);
+      } else if (symbol) {
+        symbol = "";
+      } else {
+        firstValue = firstValue.slice(0, -1);
+      }
 
-    if (!secondValue && btnValue === '=') return null
+      display.innerText = display.innerText.slice(0, -1);
+      return;
+    }
 
-    if (btnValue === 'C') {
-      firstValue = secondValue = symbol = ''
-      return display.innerText = ''
+    if (!secondValue && btnValue === "=") return null;
+
+    if (btnValue === "C") {
+      firstValue = secondValue = symbol = "";
+      return (display.innerText = "");
     }
 
     if (firstValue && btnValueIsSymbol) {
-      secondValue && calculate()
-      symbol = btnValue
+      secondValue && calculate();
+      symbol = btnValue;
     }
 
     // if there's no symbol, that means the user is still inputting first value
-    else if (!symbol) firstValue += btnValue
+    else if (!symbol) firstValue += btnValue;
     // if there's a symbol, that means the user is done with the first value, so add to second
-    else if (symbol) secondValue += btnValue
+    else if (symbol) secondValue += btnValue;
     // don't add the equal-sign to the display
-    if (btnValue !== '=') display.innerText += btnValue
-  })
+    if (btnValue !== "=") display.innerText += btnValue;
+  });
 }
 
 /*
