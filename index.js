@@ -6,68 +6,84 @@ let firstValue = "";
 let secondValue = "";
 let symbol = "";
 let result = "";
+let equalsClicked = false; // ✅ déclenché UNIQUEMENT par "="
 
 const calculate = () => {
-  firstValue = parseFloat(firstValue);
-  secondValue = parseFloat(secondValue);
+  const a = parseFloat(firstValue);
+  const b = parseFloat(secondValue);
 
-  if (symbol === "+") result = firstValue + secondValue;
-  if (symbol === "-") result = firstValue - secondValue;
-  if (symbol === "X") result = firstValue * secondValue;
-  if (symbol === "÷") result = firstValue / secondValue;
-  if (symbol === "%") result = firstValue % secondValue;
+  if (symbol === "+") result = a + b;
+  if (symbol === "-") result = a - b;
+  if (symbol === "X") result = a * b;
+  if (symbol === "÷") result = a / b;
+  if (symbol === "%") result = a % b;
 
   display.innerText = result;
-  firstValue = result;
+  firstValue = result.toString();
   secondValue = "";
 };
 
 for (let button of controlButtons) {
   button.addEventListener("click", () => {
     const { innerText: btnValue } = button;
-    const btnValueIsSymbol = allSymbols.includes(btnValue);
+    const isSymbol = allSymbols.includes(btnValue);
+
+    // ⌫ BACKSPACE
     if (btnValue === "⌫") {
-      if (secondValue) {
-        secondValue = secondValue.slice(0, -1);
-      } else if (symbol) {
-        symbol = "";
-      } else {
-        firstValue = firstValue.slice(0, -1);
-      }
+      equalsClicked = false;
+
+      if (secondValue) secondValue = secondValue.slice(0, -1);
+      else if (symbol) symbol = "";
+      else firstValue = firstValue.slice(0, -1);
 
       display.innerText = display.innerText.slice(0, -1);
       return;
     }
 
-    if (!secondValue && btnValue === "=") return null;
-
+    // CLEAR
     if (btnValue === "C") {
       firstValue = secondValue = symbol = "";
-      return (display.innerText = "");
+      equalsClicked = false;
+      display.innerText = "";
+      return;
     }
 
-    if (firstValue && btnValueIsSymbol) {
-      secondValue && calculate();
+    // 🔁 CHIFFRE APRÈS "=" → REMPLACEMENT
+    if (equalsClicked && !isSymbol) {
+      firstValue = btnValue;
+      secondValue = "";
+      symbol = "";
+      equalsClicked = false;
+      display.innerText = btnValue;
+      return;
+    }
+
+    // =
+    if (btnValue === "=") {
+      if (!secondValue) return;
+      calculate();
+      equalsClicked = true; // ✅ SEUL ICI
+      return;
+    }
+
+    // SYMBOL
+    if (firstValue && isSymbol) {
+      if (secondValue) calculate();
       symbol = btnValue;
+      equalsClicked = false;
+    }
+    // FIRST VALUE
+    else if (!symbol) {
+      firstValue += btnValue;
+    }
+    // SECOND VALUE
+    else {
+      secondValue += btnValue;
     }
 
-    // if there's no symbol, that means the user is still inputting first value
-    else if (!symbol) firstValue += btnValue;
-    // if there's a symbol, that means the user is done with the first value, so add to second
-    else if (symbol) secondValue += btnValue;
-    // don't add the equal-sign to the display
-    if (btnValue !== "=") display.innerText += btnValue;
+    display.innerText += btnValue;
   });
 }
-
-/*
-  todo: add backspace functionality
-*/
-
-/*
-  todo: if the value on the screen is a result, and the user clicks on a number,
-   replace the value on the screen with the new number
-*/
 
 /*
   todo: if last character in the display is a symbol and the user clicks on another symbol,
