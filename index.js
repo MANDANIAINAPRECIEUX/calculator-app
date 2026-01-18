@@ -6,7 +6,7 @@ let firstValue = "";
 let secondValue = "";
 let symbol = "";
 let result = "";
-let equalsClicked = false; // ✅ déclenché UNIQUEMENT par "="
+let equalsClicked = false;
 
 const calculate = () => {
   const a = parseFloat(firstValue);
@@ -65,6 +65,16 @@ for (let button of controlButtons) {
       equalsClicked = true; // ✅ SEUL ICI
       return;
     }
+    if (
+      isSymbol && // bouton cliqué est un symbole
+      symbol && // un symbole existe déjà
+      !secondValue && // on n’a pas encore tapé le 2e nombre
+      display.innerText.slice(-1) === symbol // dernier caractère affiché = symbole
+    ) {
+      symbol = btnValue;
+      display.innerText = display.innerText.slice(0, -1) + btnValue;
+      return;
+    }
 
     // SYMBOL
     if (firstValue && isSymbol) {
@@ -88,6 +98,7 @@ for (let button of controlButtons) {
 /*
   todo: if last character in the display is a symbol and the user clicks on another symbol,
    replace last character with the new symbol
+   
 */
 
 /*
